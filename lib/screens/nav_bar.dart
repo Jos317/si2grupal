@@ -32,12 +32,15 @@ class NavBar extends StatelessWidget {
                 ),
               ),
             ),
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: NetworkImage('https://oflutter.com/wp-content/uploads/2021/02/profile-bg3.jpg')
-              ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Color.fromARGB(248, 146, 64, 146),
+                    Color.fromARGB(248, 136, 30, 202),
+                    Color.fromARGB(248, 7, 175, 221),
+                  ]),
             ),
           ),
           ListTile(
@@ -46,13 +49,13 @@ class NavBar extends StatelessWidget {
             onTap: () => Navigator.pushReplacementNamed(context, 'user'),
           ),
           ListTile(
-            leading: const Icon(Icons.terminal),
+            leading: const Icon(Icons.padding_outlined),
             title: const Text('Factura'),
             onTap: () => Navigator.pushReplacementNamed(context, 'facturas'),
           ),
           if(userProvider.cargo=='Analista')...[
             ListTile(
-              leading: const Icon(Icons.terminal),
+              leading: const Icon(Icons.arrow_circle_down),
               title: const Text('Baja'),
               onTap: () => Navigator.pushReplacementNamed(context, 'activos'),
             ),

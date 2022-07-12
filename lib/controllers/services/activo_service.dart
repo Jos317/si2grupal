@@ -29,8 +29,8 @@ class ActivosService {
     }
   }
 
-  static Future<ActivosModel?> getActivo(String codigo) async {
-    var params = {"codigo": codigo};
+  static Future<ActivosModel?> getActivo(String codigo, int id) async {
+    var params = {"id": id.toString(), "codigo": codigo};
     final urlPrincipal = ServerProvider().url;
     final token = SharedPreferencesMemory().obtenerToken();
     final url = Uri.parse(urlPrincipal + '/api/obtenerActivo');

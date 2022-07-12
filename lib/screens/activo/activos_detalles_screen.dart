@@ -3,13 +3,14 @@ import 'package:activos_app/controllers/services/activo_service.dart';
 import 'package:activos_app/models/activos_model.dart';
 import 'package:activos_app/screens/nav_bar.dart';
 import 'package:activos_app/screens/screens.dart';
-import 'package:activos_app/screens/user/edit_user_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class ActivosDetallesScreen extends StatefulWidget {
-  final String codigo;
-  const ActivosDetallesScreen(this.codigo, {Key? key}) : super(key: key);
+  final String codigoQr;
+  final int codigo;
+  const ActivosDetallesScreen(this.codigoQr, this.codigo, {Key? key})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _ActivosDetallesState();
@@ -20,15 +21,15 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
 
   @override
   void initState() {
-    String codigo = widget.codigo;
+    String codigoQr = widget.codigoQr;
+    int codigo = widget.codigo;
     super.initState();
-    ActivosService.getActivo(codigo).then((activo) {
+    ActivosService.getActivo(codigoQr, codigo).then((activo) {
       setState(() {
         _activo = activo;
       });
     });
-    Provider.of<ActivofijoProvider>(context, listen: false)
-        .setActivo(codigo);
+    Provider.of<ActivofijoProvider>(context, listen: false).setActivo(codigoQr, codigo);
   }
 
   @override
@@ -48,7 +49,7 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditUserScreen()),
+                MaterialPageRoute(builder: (context) => ActivoScreen()),
               );
             },
           ),
@@ -87,6 +88,34 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 35),
                   child: Column(
                     children: [
+                      Container(
+                        height: height * 0.4,
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            double innerHeight = constraints.maxHeight;
+                            double innerWidth = constraints.maxWidth;
+                            return Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Center(
+                                  child: Container(
+                                    height: innerWidth * 0.8,
+                                    width: innerWidth * 0.8,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(value.activo!.foto),
+                                            fit: BoxFit.cover
+                                        ),
+                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        border: Border.all(color: Color.fromARGB(255, 68, 227, 255), width: 5.0)
+                                    ),
+                                ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -230,7 +259,7 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    '${value.activo!.costo}',
+                                    '${value.activo!.costo} Bs',
                                     style: TextStyle(
                                       color: Color.fromRGBO(39, 105, 171, 1),
                                       fontFamily: 'Nunito',
@@ -399,7 +428,7 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
                                 height: 20,
                               ),
                               Text(
-                                'Ubicación del Activo',
+                                'Ubicación',
                                 style: TextStyle(
                                   color: Color.fromRGBO(39, 105, 171, 1),
                                   fontSize: 27,
@@ -531,6 +560,180 @@ class _ActivosDetallesState extends State<ActivosDetallesScreen> {
                                       fontSize: 15,
                                     ),
                                   ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Divider(
+                                thickness: 1.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        height: height * 0.5,
+                        width: width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Depreciación',
+                                style: TextStyle(
+                                  color: Color.fromRGBO(39, 105, 171, 1),
+                                  fontSize: 27,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Divider(
+                                thickness: 4.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Bienes: ',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${value.activo!.depreciacionNombre}',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(39, 105, 171, 1),
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Divider(
+                                thickness: 1.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Descripción: ',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${value.activo!.depreciacionDescripcion}',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(39, 105, 171, 1),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Divider(
+                                thickness: 1.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Vida Util: ',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${value.activo!.depreciacionVidaUtil} Años',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(39, 105, 171, 1),
+                                      fontFamily: 'Nunito',
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Divider(
+                                thickness: 1.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Valor Residual: ',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  if(value.activo!.valorResidual == null)...[
+                                    Text(
+                                      'No tiene valor residual',
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(39, 105, 171, 1),
+                                        fontFamily: 'Nunito',
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ]else...[
+                                    Text(
+                                    '${value.activo!.valorResidual} Bs',
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(39, 105, 171, 1),
+                                      fontFamily: 'Nunito',
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  ]
                                 ],
                               ),
                               SizedBox(

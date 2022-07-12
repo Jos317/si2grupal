@@ -1,15 +1,19 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:activos_app/controllers/providers/activo_provider.dart';
 import 'package:activos_app/controllers/services/activo_service.dart';
 import 'package:activos_app/models/activo_model.dart';
 import 'package:activos_app/screens/activo/activos_detalles_screen.dart';
 import 'package:activos_app/screens/nav_bar.dart';
 import 'package:activos_app/widgets/perspective_list_view.dart';
+import 'package:flutter/src/gestures/events.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter/gestures.dart';
 
 class ActivoScreen extends StatefulWidget {
   const ActivoScreen({
@@ -23,6 +27,7 @@ class ActivoScreen extends StatefulWidget {
 class _ActivoScreenState extends State<ActivoScreen> {
   var myMenuItems = <String>[
     'Escanner \nCódigo de Barras',
+    'Escanner \nCódigo de QR',
     'Buscador',
   ];
 
@@ -31,6 +36,9 @@ class _ActivoScreenState extends State<ActivoScreen> {
       case 'Escanner \nCódigo de Barras':
         scan();
         break;
+      case 'Escanner \nCódigo de QR':
+        scanQR();
+        break;
       case 'Buscador':
         print('Profile clicked');
         break;
@@ -38,6 +46,7 @@ class _ActivoScreenState extends State<ActivoScreen> {
   }
 
   String _data = "";
+  String _data2 = "";
   int? _visibleItems;
   double? _itemExtent;
   List<ActivoModel> _activos = [];
@@ -57,9 +66,30 @@ class _ActivoScreenState extends State<ActivoScreen> {
       _data = barcodeScanRes;
     });
     Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ActivosDetallesScreen(_data)),
-              );
+      context,
+      MaterialPageRoute(builder: (context) => ActivosDetallesScreen(_data, 0)),
+    );
+  }
+
+  Future<void> scanQR() async {
+    String qrScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    qrScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR);
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _data2 = qrScanRes;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ActivosDetallesScreen("", int.parse(_data2))),
+    );
   }
 
   @override
@@ -146,7 +176,7 @@ class _ActivoScreenState extends State<ActivoScreen> {
                         heightFactor: .9,
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          height: 30,
+                          height: 45,
                           width: 70,
                           decoration: BoxDecoration(
                             color: borderColor,
@@ -187,9 +217,6 @@ class _ActivoScreenState extends State<ActivoScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                //---------------------------
-                                // Name and Role
-                                //---------------------------
                                 Row(
                                   children: [
                                     const Icon(
@@ -221,9 +248,6 @@ class _ActivoScreenState extends State<ActivoScreen> {
                                     ),
                                   ],
                                 ),
-                                //---------------------------
-                                // Address
-                                //---------------------------
                                 Row(
                                   children: [
                                     const Icon(
@@ -257,9 +281,6 @@ class _ActivoScreenState extends State<ActivoScreen> {
                                     ),
                                   ],
                                 ),
-                                //---------------------------
-                                // Phone Number
-                                //---------------------------
                                 Row(
                                   children: [
                                     const Icon(
@@ -276,7 +297,7 @@ class _ActivoScreenState extends State<ActivoScreen> {
                                           children: [
                                             TextSpan(
                                               text:
-                                                  "\nNro de Factura: ${activo.idFactura}",
+                                                  "\nUbicación: ${activo.ubicacionEdificio}",
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.normal,
@@ -292,40 +313,21 @@ class _ActivoScreenState extends State<ActivoScreen> {
                                     ),
                                   ],
                                 ),
-                                //---------------------------
-                                // eMail
-                                //---------------------------
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.saved_search_outlined,
-                                      size: 40,
+                                const SizedBox(height: 10),
+                                Center(
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ActivosDetallesScreen("", activo.id)),
+                                      );
+                                    },
+                                    child: Text("Más detalles", style: TextStyle(
+                                      color: Colors.green[300],
                                     ),
-                                    const SizedBox(width: 10),
-                                    Flexible(
-                                      child: Text.rich(
-                                        TextSpan(
-                                          text: "Estado: ${activo.estado}",
-                                          // text: "${value.activos!.codigo}",
-                                          children: [
-                                            TextSpan(
-                                              text:
-                                                  "\nUbicacion: ${activo.ubicacionEdificio}",
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.normal,
-                                                color: Colors.deepPurple,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),

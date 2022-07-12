@@ -2,8 +2,6 @@ import 'package:activos_app/controllers/providers/server_provider.dart';
 import 'package:activos_app/controllers/providers/user_provider.dart';
 import 'package:activos_app/screens/imagen_dialog.dart';
 import 'package:activos_app/screens/nav_bar.dart';
-import 'package:activos_app/screens/screens.dart';
-import 'package:activos_app/screens/user/edit_user_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -32,20 +30,6 @@ class _UserState extends State<UserScreen> {
       appBar: AppBar(
         backgroundColor: Colors.deepPurpleAccent,
         elevation: 1,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.edit_note,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditUserScreen()),
-              );
-            },
-          ),
-        ],
         centerTitle: true,
         title: const Text('Activos App'),
       ),

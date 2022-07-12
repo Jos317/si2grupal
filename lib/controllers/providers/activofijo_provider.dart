@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class ActivofijoProvider extends ChangeNotifier {
   ActivosModel? activo = null;
 
-  setActivo(String codigo) async {
-    activo = await ActivosService.getActivo(codigo);
+  setActivo(String codigoQr, int codigo) async {
+    activo = await ActivosService.getActivo(codigoQr, codigo);
     notifyListeners();
   }
 }
