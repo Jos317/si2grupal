@@ -11,7 +11,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final serverProvider = Provider.of<ServerProvider>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
